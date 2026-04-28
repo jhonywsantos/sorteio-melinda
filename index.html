@@ -350,6 +350,10 @@
     let animationTimer = null;      // timeout para parar animação
     let isRolling = false;           // trava para não acumular animações
     let rollInterval = null;         // intervalo de troca rápida de números
+    const rouletteAudio = new Audio('assets/audio/roulette.mp3');
+    rouletteAudio.preload = 'auto';
+    rouletteAudio.volume = 0.85;
+    rouletteAudio.loop = false;
 
     // Função para atualizar a lista visual dos sorteados
     function atualizarListaVisual() {
@@ -403,6 +407,10 @@
             animationTimer = null;
         }
         bolaDiv.classList.remove('bola-animada');
+        if (!rouletteAudio.paused) {
+            rouletteAudio.pause();
+            rouletteAudio.currentTime = 0;
+        }
         isRolling = false;
     }
 
@@ -412,6 +420,12 @@
         pararAnimacaoRolagem(); // garantir limpeza
         isRolling = true;
         bolaDiv.classList.add('bola-animada');
+
+        // Tocar áudio de roleta enquanto a bola roda
+        rouletteAudio.currentTime = 0;
+        rouletteAudio.play().catch(() => {
+            // autoplay pode ser bloqueado em alguns navegadores; não impede o sorteio
+        });
 
         // Números falsos rápidos pra dar efeito de roleta
         let fakeCount = 0;
@@ -432,6 +446,10 @@
                 // Pequeno delay para finalizar animação e apresentar número verdadeiro
                 animationTimer = setTimeout(() => {
                     bolaDiv.classList.remove('bola-animada');
+                    if (!rouletteAudio.paused) {
+                        rouletteAudio.pause();
+                        rouletteAudio.currentTime = 0;
+                    }
                     if (callbackFinal) callbackFinal();
                     isRolling = false;
                 }, 80);
