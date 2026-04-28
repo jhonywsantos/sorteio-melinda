@@ -354,6 +354,10 @@
     rouletteAudio.preload = 'auto';
     rouletteAudio.volume = 0.85;
     rouletteAudio.loop = false;
+    const resultAudio = new Audio('assets/audio/result.mp3');
+    resultAudio.preload = 'auto';
+    resultAudio.volume = 0.85;
+    resultAudio.loop = false;
 
     // Função para atualizar a lista visual dos sorteados
     function atualizarListaVisual() {
@@ -450,6 +454,13 @@
                         rouletteAudio.pause();
                         rouletteAudio.currentTime = 0;
                     }
+                    if (!resultAudio.paused) {
+                        resultAudio.pause();
+                    }
+                    resultAudio.currentTime = 0;
+                    resultAudio.play().catch(() => {
+                        // autoplay pode ser bloqueado em alguns navegadores; não impede o sorteio
+                    });
                     if (callbackFinal) callbackFinal();
                     isRolling = false;
                 }, 80);
